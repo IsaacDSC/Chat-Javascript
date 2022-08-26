@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es5",
+    "lib": [
+      "es2021",
+      "dom"
+    ],
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "baseUrl": "src",
+    "rootDir": ".",
+    "paths": {
+      "@/*": ["*"],
+      "@models/*": ["./models/*"],
+      "@services/*": ["./services/*"],
+      "@UseCases/*": ["./services/UseCases/*"],
+      "@utils/*": ["./utils/*"],
+      "@helpers/*": ["./helpers/*"],
+      "@config/*": ["./config/*"],
+      "@middlewares/*": ["./middlewares/*"],
+      "@routes/*": ["./routes/*"],
+      "@controllers/*": ["./controllers/*"],
+      "@events/*": ["./events/*"],
+      "@interfaces/*": ["./interfaces/*"],
+      "@types/*": ["./types/*"],
+      "@validations/*": ["./validations/*"],
+      "@queues/*": ["./queues/*"],
+      "@procedules/*": ["./procedules/*"],
+      "@log/*": ["./log/*"],
+      "@entities/*": ["./entities/*"],
+      "@vscode/*": ["../.vscode/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./test/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules/*",
+  ]
+}
