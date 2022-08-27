@@ -6,9 +6,11 @@
     "scripts": {
         "dev": "ts-node-dev --respawn --watch 'src/**' --transpile-only --exit-child --ignore-watch node_modules -r tsconfig-paths/register src/main.ts",
         "test": "jest",
-        "test:ws:chat": "jest ./src/infra/events/chat/chat.event.spec.ts"
+        "test:ws:chat": "jest ./src/infra/events/chat/chat.event.spec.ts",
+        "test:api:user": "jest ./src/infra/routes/user.routes.spec.ts"
     },
     "dependencies": {
+        "axios": "^0.27.2",
         "cors": "^2.8.5",
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
