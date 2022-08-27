@@ -21,9 +21,9 @@ export class ChatEvents {
       )
       const response = await resolver.sendMessage(params);
 
-      socket.join(CHAT_EVENTS.GENERAL_CHANNEL(params.room));
+      socket.join(this.Room(socket.eventId));
       socket.emit(CHAT_EVENTS.NEW_MESSAGE, response);
-      io.to(CHAT_EVENTS.GENERAL_CHANNEL(params.eventId)).emit(CHAT_EVENTS.SEND_MESSAGE, response);
+      io.to(this.Room(socket.eventId)).emit(CHAT_EVENTS.BROADCAST_MESSAGE, response);
 
     });
   }
