@@ -1,4 +1,4 @@
-#root {
+/* #root {
     max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
@@ -42,6 +42,31 @@
     color: #888;
 }
 
+h1 {
+    color: rgb(237, 202, 2);
+} */
+
 #root {
-    background-color: rgba(0, 0, 0, 0.702);
+    color: #fff;
+    height: 100vh;
+    background-color: rgba(9, 1, 14, 0.865);
 }
+
+
+/*
+#app-chat #card-room {
+    background-color: rgba(0, 0, 0, 0.23);
+}
+
+
+
+#app-chat #card-room {
+    background-color: rgba(86, 13, 155, 0.424);
+    border-radius: 5px;
+}
+
+#app-chat #card-room button {
+    background-color: rgba(237, 174, 2, 0.925);
+    border-color: rgba(255, 255, 0, 0.654);
+    color: black;
+} */

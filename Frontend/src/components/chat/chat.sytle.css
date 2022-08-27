@@ -1,5 +1,5 @@
 .card-bordered {
-    border: 1px solid #ebebeb;
+    border-radius: 50%;
 }
 
 .card {
@@ -13,11 +13,11 @@
 }
 
 .padding {
-    padding: 3rem !important
+    padding: 3rem;
 }
 
 body {
-    background-color: #f9f9fa
+    background-color: rgb(41, 2, 78)
 }
 
 .card-header:first-child {
@@ -25,6 +25,8 @@ body {
 }
 
 .card-header {
+    color: #000;
+    background-color: rgba(236, 236, 236, 0.696);
     display: -webkit-box;
     display: flex;
     -webkit-box-pack: justify;
@@ -32,7 +34,6 @@ body {
     -webkit-box-align: center;
     align-items: center;
     padding: 15px 20px;
-    background-color: transparent;
     border-bottom: 1px solid rgba(77, 82, 89, 0.07);
 }
 
@@ -97,9 +98,10 @@ h4.card-title {
 }
 
 .media {
+    background-color: rgba(5, 0, 9, 0.812);
     padding: 16px 12px;
-    -webkit-transition: background-color .2s linear;
-    transition: background-color .2s linear;
+    /* -webkit-transition: background-color .2s linear; */
+    /* transition: background-color .2s linear; */
 }
 
 .media .avatar {
@@ -211,7 +213,7 @@ h4.card-title {
 .media-chat.media-chat-reverse .media-body p {
     float: right;
     clear: right;
-    background-color: #48b0f7;
+    background-color: #8c08f8;
     color: #fff;
 }
 
@@ -305,6 +307,5 @@ textarea {
 }
 
 #card-chat {
-    height: 100vh;
-    scroll-behavior: auto;
+    border-radius: 2%;
 }

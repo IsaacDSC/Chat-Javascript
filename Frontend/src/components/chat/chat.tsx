@@ -1,105 +1,108 @@
 import React, { useEffect, useState } from 'react';
+import io from 'socket.io-client'
+import {
+  ModalChatLogin
+} from '../subcomponents';
 
 import './chat.sytle.css'
 
+const socket = io('http://localhost:3333', {
+  path: '/chat',
+  transports: ['websocket'],
+  auth: {
+    accessToken: import.meta.env.TOKEN,
+    secretToken: import.meta.env.SECRET,
+  },
+  query: { eventId: 'room' },
+})
+
+socket.on('connect', () => console.log('Connected !!!'))
 
 export function Chat() {
-
+  const path = window.location.pathname;
   const [values, setValues] = useState({})
+  const [messages, setMessages] = useState([])
+  const [user, setUser] = useState(null)
+
+  socket.on('get_all_messages', (msg) => {
+    setMessages(msg);
+  })
 
   function onChange(ev: any) {
     setValues({ ...values, [ev.target.name]: ev.target.value })
   }
 
   function SendMessage() {
-    var url_atual = window.location.href;
+
     const path = window.location.pathname;
     const { message }: any = values
-    console.log({message, path, url_atual})
+
+    socket.emit('send_message', { name: user?.username, room: path, message })
+
+    socket.on('new_message', (msg) => {
+      const data = [...messages]
+      data.push(msg)
+      setMessages(data)
+      console.log('new_message', msg, user)
+    })
+
+    socket.on('broadcast_message', (msg) => {
+      console.log(msg)
+      const data = [...messages]
+      data.push(msg)
+      setMessages(data)
+      console.log('new_message', msg, user)
+    })
+
   }
 
   return (
     <>
+      <ModalChatLogin userState={setUser}></ModalChatLogin>
+
       <div className="page-content page-container" id="page-content">
         <div className="padding">
           <div className="row container d-flex justify-content-center">
-            <div className="col-md-6">
+            <div className="col-md-6" id='card-init'>
               <div className="card card-bordered" id='card-chat'>
                 <div className="card-header">
                   <h4 className="card-title"><strong>Chat</strong></h4>
-                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Let's Chat App</a>
+                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Bate-Papo: {path == '/' ? 'Principal' : path}</a>
                 </div>
 
 
                 <div className="ps-container ps-theme-default ps-active-y" id="chat-content">
-                  <div className="media media-chat">
-                    <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                    <div className="media-body">
-                      <p>Hi</p>
-                      <p>How are you ...???</p>
-                      <p>What are you doing tomorrow?<br /> Can we come up a bar?</p>
-                      <p className="meta"><time>23:58</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-meta-day">Today</div>
-
-                  <div className="media media-chat media-chat-reverse">
-                    <div className="media-body">
-                      <p>Hiii, I'm good.</p>
-                      <p>How are you doing?</p>
-                      <p>Long time no see! Tomorrow office. will be free on sunday.</p>
-                      <p className="meta"><time>00:06</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat">
-                    <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                    <div className="media-body">
-                      <p>Okay</p>
-                      <p>We will go on sunday? </p>
-                      <p className="meta"><time>00:07</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat media-chat-reverse">
-                    <div className="media-body">
-                      <p>That's awesome!</p>
-                      <p>I will meet you Sandon Square sharp at 10 AM</p>
-                      <p>Is that okay?</p>
-                      <p className="meta"><time>00:09</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat">
-                    <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                    <div className="media-body">
-                      <p>Okay i will meet you on Sandon Square </p>
-                      <p className="meta"><time>00:10</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat media-chat-reverse">
-                    <div className="media-body">
-                      <p>Do you have pictures of Matley Marriage?</p>
-                      <p className="meta"><time>00:10</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat">
-                    <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                    <div className="media-body">
-                      <p>Sorry I don't have. i changed my phone.</p>
-                      <p className="meta"><time>00:12</time></p>
-                    </div>
-                  </div>
-
-                  <div className="media media-chat media-chat-reverse">
-                    <div className="media-body">
-                      <p>Okay then see you on sunday!!</p>
-                      <p className="meta"><time>00:12</time></p>
-                    </div>
-                  </div>
+                  {
+                    messages.map((msg: any) => (
+                      user?.username != msg.name ?
+                        <div className="media media-chat" key={msg.id}>
+                          <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
+                          <div className="media-body">
+                            <p><small>{msg.name}</small>: {msg.message}</p>
+                            <p className="meta">
+                              <time>
+                                {
+                                  `${new Date(msg.createdAt).getHours()}:${new Date(msg.createdAt).getMinutes()}`
+                                }
+                              </time>
+                            </p>
+                          </div>
+                        </div>
+                        :
+                        <div className="media media-chat media-chat-reverse" key={msg.id}>
+                          <div className="media-body">
+                            <p><small>{msg.name}</small>: {msg.message}</p>
+                            <p className="meta">
+                              <time>
+                                {
+                                  `${new Date(msg.createdAt).getHours()}:${new Date(msg.createdAt).getMinutes()}`
+                                }
+                              </time>
+                            </p>
+                          </div>
+                        </div>
+                    ))
+                  }
 
                   <div className="ps-scrollbar-x-rail">
                     <div className="ps-scrollbar-x" ></div>
@@ -108,14 +111,18 @@ export function Chat() {
                   </div>
                 </div>
 
-                <div className="publisher bt-1 border-light">
+                <div className="publisher bt-1 border-light" id='publisher'>
                   <img className="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
                   <input className="publisher-input" name='message' type="text" placeholder="Didige sua Mensagem ... " onChange={onChange} />
                   <span className="publisher-btn file-group">
-                    <i className="fa fa-paperclip file-browser"></i>
-                    <input type="file" />
+                  {
+                    !!user == false ?
+                      <button className='btn btn-light' type='button' data-toggle="modal" data-target="#modalChatLogin">Login</button>
+                      : <button className='btn btn-light' type='button' onClick={SendMessage} onKeyPress={SendMessage}>
+                        Enviar
+                      </button>
+                  }
                   </span>
-                  <button className='btn btn-primary' type='button' onClick={SendMessage} onKeyPress={SendMessage}>Enviar</button>
                 </div>
               </div>
             </div>
