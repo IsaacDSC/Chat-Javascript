@@ -3,7 +3,8 @@ import axios from 'axios';
 interface IUser {
   username: string,
   email: string,
-  birthday: Date
+  birthday: Date,
+  password: string,
 }
 
 export async function InsertUser(user: IUser) {
@@ -11,14 +12,13 @@ export async function InsertUser(user: IUser) {
 
   const { data, status } = await axios.post(URL, user);
 
-  if (!!!data || status != 201) {
-    console.log({ data, status })
+  if (!!!data || status > 202) {
     return null;
   }
 
   return data;
 }
 
-export async function FindAllUser(){
+export async function FindAllUser() {
 
 }

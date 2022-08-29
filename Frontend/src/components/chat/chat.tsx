@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client'
 import {
-  ModalChatLogin
+  ModalChatLogin,
+  ModalRegisterUser
 } from '../subcomponents';
 
 import './chat.sytle.css'
+
+const Room: any = !window.location.search.match(/room=(.*)/) ?
+  window.location.pathname : window.location.search.match(/room=(.*)/)
 
 const socket = io('http://localhost:3333', {
   path: '/chat',
@@ -13,13 +17,16 @@ const socket = io('http://localhost:3333', {
     accessToken: import.meta.env.TOKEN,
     secretToken: import.meta.env.SECRET,
   },
-  query: { eventId: 'room' },
+  query: {
+    eventId: Room
+  },
 })
+
 
 socket.on('connect', () => console.log('Connected !!!'))
 
 export function Chat() {
-  const path = window.location.pathname;
+
   const [values, setValues] = useState({})
   const [messages, setMessages] = useState([])
   const [user, setUser] = useState(null)
@@ -34,30 +41,22 @@ export function Chat() {
 
   function SendMessage() {
 
-    const path = window.location.pathname;
     const { message }: any = values
-
-    socket.emit('send_message', { name: user?.username, room: path, message })
-
-    socket.on('new_message', (msg) => {
-      const data = [...messages]
-      data.push(msg)
-      setMessages(data)
-      console.log('new_message', msg, user)
-    })
-
-    socket.on('broadcast_message', (msg) => {
-      console.log(msg)
-      const data = [...messages]
-      data.push(msg)
-      setMessages(data)
-      console.log('new_message', msg, user)
-    })
+    // console.log({ name: user?.username, message })
+    socket.emit('send_message', { name: user?.username, message })
 
   }
 
+  socket.on('broadcast_message', (msg) => {
+    const data = [...messages]
+    data.push(msg)
+    setMessages(data)
+    // console.log('new_message', msg, user)
+  })
+
   return (
     <>
+      <ModalRegisterUser userState={setUser}></ModalRegisterUser>
       <ModalChatLogin userState={setUser}></ModalChatLogin>
 
       <div className="page-content page-container" id="page-content">
@@ -67,18 +66,18 @@ export function Chat() {
               <div className="card card-bordered" id='card-chat'>
                 <div className="card-header">
                   <h4 className="card-title"><strong>Chat</strong></h4>
-                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Bate-Papo: {path == '/' ? 'Principal' : path}</a>
+                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Bate-Papo: {Room[1] == '/' ? 'Principal' : Room[1]}</a>
                 </div>
 
 
                 <div className="ps-container ps-theme-default ps-active-y" id="chat-content">
                   {
                     messages.map((msg: any) => (
-                      user?.username != msg.name ?
+                      user?.username != msg.username ?
                         <div className="media media-chat" key={msg.id}>
                           <img className="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
                           <div className="media-body">
-                            <p><small>{msg.name}</small>: {msg.message}</p>
+                            <p><small>{msg.username}</small>: {msg.message}</p>
                             <p className="meta">
                               <time>
                                 {
@@ -91,7 +90,7 @@ export function Chat() {
                         :
                         <div className="media media-chat media-chat-reverse" key={msg.id}>
                           <div className="media-body">
-                            <p><small>{msg.name}</small>: {msg.message}</p>
+                            <p><small>{msg.username}</small>: {msg.message}</p>
                             <p className="meta">
                               <time>
                                 {
@@ -112,17 +111,31 @@ export function Chat() {
                 </div>
 
                 <div className="publisher bt-1 border-light" id='publisher'>
-                  <img className="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                  <input className="publisher-input" name='message' type="text" placeholder="Didige sua Mensagem ... " onChange={onChange} />
-                  <span className="publisher-btn file-group">
-                  {
-                    !!user == false ?
-                      <button className='btn btn-light' type='button' data-toggle="modal" data-target="#modalChatLogin">Login</button>
-                      : <button className='btn btn-light' type='button' onClick={SendMessage} onKeyPress={SendMessage}>
-                        Enviar
-                      </button>
+                  {!!user == false ?
+                    <>
+                      <span className="publisher-btn file-group">
+                        <div className="row">
+                          <div className="col">
+                            <button className='btn btn-light col-12' type='button' data-toggle="modal" data-target="#modalChatLogin">Login</button>
+                          </div>
+                          <div className="col">
+                            <button className='btn btn-light col-12' type='button' data-toggle="modal" data-target="#modalChatRegister">Registrar</button>
+                          </div>
+                        </div>
+                      </span>
+                    </> :
+
+                    <>
+
+                      <img className="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
+                      <input className="publisher-input" name='message' type="text" placeholder="Didige sua Mensagem ... " onChange={onChange} />
+                      <span className="publisher-btn file-group">
+                        <button className='btn btn-light' type='button' onClick={SendMessage} onKeyPress={SendMessage}>
+                          Enviar
+                        </button>
+                      </span>
+                    </>
                   }
-                  </span>
                 </div>
               </div>
             </div>
