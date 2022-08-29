@@ -1,0 +1,19 @@
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+AddRelTag("async", $lineStyle = DashedLine())
+
+Person(PersonAdmin, "Consumer Chat Demo", "Optional Description")
+
+System(Chat_Frontend, "Frontend Chat-Demo", "Service Reactjs")
+
+Rel(PersonAdmin, Chat_Frontend,  "Using interact Chat Frontend", "Chat in Rooms")
+
+Container(Chat_Backend, "Oli-checkout-service", "Technology", "Integrations Ecommerces")
+Rel(Chat_Frontend, Chat_Backend,  "JSON API", "CRUD User and Login auth")
+Rel(Chat_Frontend, Chat_Backend,  "WebSocket", "Comunnication chat synchronus", $tags = "async")
+
+ContainerDb(postgres, "Database", "Postgres", "Database SQL (users, messages)")
+Rel(Chat_Backend, postgres,  "Postgres", "Pulling Cominication database")
+
+@enduml
