@@ -12,7 +12,7 @@ import { MessagesRepository } from '../../../app/repositories/messages.repositor
 import { Socket } from 'socket.io';
 
 export class ChatEvents {
-  private Room = (eventId:string) => { return CHAT_EVENTS.GENERAL_CHANNEL(eventId); }
+  private Room = (eventId: string) => { return CHAT_EVENTS.GENERAL_CHANNEL(eventId); }
 
   sendMessage(socket, io: Socket): void {
     socket.on(CHAT_EVENTS.SEND_MESSAGE, async (params) => {
@@ -28,10 +28,11 @@ export class ChatEvents {
     });
   }
   async connected(socket, io: Socket, liveId: string): Promise<void> {
+    socket.eventId = socket.handshake.query.eventId
     const resolver = new ChatResolver(
       new ChatEntities()
     )
-
+    console.log(this.Room(socket.eventId))
     const messages = await resolver.findAllMessages(this.Room(socket.eventId));
     socket.join(this.Room(socket.eventId));
     socket.emit(CHAT_EVENTS.GET_ALL_MESSAGES, messages)
