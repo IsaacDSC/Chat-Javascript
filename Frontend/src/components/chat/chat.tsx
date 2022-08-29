@@ -18,7 +18,7 @@ const socket = io('http://localhost:3333', {
     secretToken: import.meta.env.SECRET,
   },
   query: {
-    eventId: Room
+    eventId: !Room[1] ? 'principal' : Room[1]
   },
 })
 
@@ -42,13 +42,14 @@ export function Chat() {
   function SendMessage() {
 
     const { message }: any = values
-    // console.log({ name: user?.username, message })
     socket.emit('send_message', { name: user?.username, message })
+    document.querySelector('#msg').value = null
 
   }
 
   socket.on('broadcast_message', (msg) => {
     const data = [...messages]
+    data.pop();
     data.push(msg)
     setMessages(data)
     // console.log('new_message', msg, user)
@@ -66,7 +67,7 @@ export function Chat() {
               <div className="card card-bordered" id='card-chat'>
                 <div className="card-header">
                   <h4 className="card-title"><strong>Chat</strong></h4>
-                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Bate-Papo: {Room[1] == '/' ? 'Principal' : Room[1]}</a>
+                  <a className="btn btn-xs btn-secondary" href="#" data-abc="true">Sala: {Room == '/' ? 'Principal' : Room[1] == '/' ? 'Principal' : Room[1]}</a>
                 </div>
 
 
@@ -128,7 +129,7 @@ export function Chat() {
                     <>
 
                       <img className="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="..." />
-                      <input className="publisher-input" name='message' type="text" placeholder="Didige sua Mensagem ... " onChange={onChange} />
+                      <input className="publisher-input" name='message' id='msg' type="text" placeholder="Didige sua Mensagem ... " onChange={onChange} />
                       <span className="publisher-btn file-group">
                         <button className='btn btn-light' type='button' onClick={SendMessage} onKeyPress={SendMessage}>
                           Enviar
