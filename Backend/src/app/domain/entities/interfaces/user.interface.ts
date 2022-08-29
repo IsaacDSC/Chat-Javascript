@@ -1,16 +1,19 @@
 
 export interface IUser {
+  id?: string;
   username: string;
   email: string;
-  birthday: Date
+  birthday: string;
+  password: string;
+  status?: boolean;
 }
 
-export interface IReturnUserEntity{
-  id: string;
-  username: string;
-  email: string;
-  birthday: Date;
-  status: boolean;
-  updatedAt: string;
-  createdAt: string;
-}
+export type IReturnUserEntity = {
+  username?: string;
+  email?: string;
+  birthday?: string;
+  password?: string;
+  status?: boolean;
+  message?: string;
+  user?: IUser
+};

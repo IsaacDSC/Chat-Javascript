@@ -17,7 +17,8 @@ export class ChatResolver {
   }
   v
   async sendMessage(
-    data: any
+    data: any,
+    room: string
   ) {
     const Message = await this.entities.CreateMessage(data);
 
@@ -25,7 +26,7 @@ export class ChatResolver {
     const service = new ChatService(
       new repository()
     )
-    const { id, message, name, room, updatedAt, createdAt } = Message;
+    const { id, message, name, updatedAt, createdAt } = Message;
     const response = await service.sendMessage({ id, message, name, room, updatedAt, createdAt })
 
     if (!!!response) return null;

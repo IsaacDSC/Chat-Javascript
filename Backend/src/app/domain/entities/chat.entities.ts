@@ -13,7 +13,7 @@ export class ChatEntities {
   ): Promise<IReturnChatEntities> {
     const { name, room, message } = data;
 
-    if (!!!name || !!!room || !!!message) {
+    if (!!!name || !!!message) {
       return {
         error: 'lack of params',
         params: [name, room, message]

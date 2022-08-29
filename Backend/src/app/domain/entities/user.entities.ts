@@ -1,21 +1,36 @@
-import { randomUUID } from 'crypto';
+import {
+  Crypt
+} from '../../helpers';
 import {
   IUser,
   IReturnUserEntity
 } from './interfaces/user.interface';
-
-
+import {
+  IMethodsUser
+} from '../../repositories/interfaces/user.repository';
 export class UserEntities {
-  registerUser(user: IUser): IReturnUserEntity {
-    const { username, email, birthday } = user;
+
+  constructor(
+    private readonly repository: IMethodsUser
+  ) {
+    this.repository = repository;
+  }
+
+  async registerUser(user: IUser): Promise<IReturnUserEntity> {
+    const { username, email, birthday, password } = user;
+
+    const existUser = await this.repository.findByUsername(username)
+
+    if (existUser) {
+      return { message: 'user already exist', user: existUser };
+    }
+
     return {
-      id: randomUUID(),
       username,
       email,
+      password: new Crypt().generateHash(password),
       birthday,
       status: true,
-      updatedAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
     }
   }
 }

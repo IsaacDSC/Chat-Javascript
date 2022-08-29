@@ -5,16 +5,25 @@
     "license": "MIT",
     "scripts": {
         "dev": "ts-node-dev --respawn --watch 'src/**' --transpile-only --exit-child --ignore-watch node_modules -r tsconfig-paths/register src/main.ts",
+        "build": "npm run generate",
+        "generate": "npm run generate:prisma",
+        "generate:prisma": "prisma generate && npm run dev",
         "test": "jest",
         "test:ws:chat": "jest ./src/infra/events/chat/chat.event.spec.ts",
-        "test:api:user": "jest ./src/infra/routes/user.routes.spec.ts"
+        "test:api:user": "jest ./src/infra/routes/user.routes.spec.ts",
+        "test:repository:msg": "jest ./src/app/repositories/msg.repository.spec.ts",
+        "test:repository:user": "jest ./src/app/repositories/user.repository.spec.ts"
     },
     "dependencies": {
+        "@prisma/client": "^4.2.1",
         "axios": "^0.27.2",
+        "bcrypt": "^5.0.1",
         "cors": "^2.8.5",
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "jest": "^29.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "prisma": "^4.2.1",
         "socket.io": "^4.5.1",
         "socket.io-client": "^4.5.1",
         "tsconfig-paths": "^4.1.0"

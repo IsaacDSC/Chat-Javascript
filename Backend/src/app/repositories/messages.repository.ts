@@ -2,19 +2,35 @@ import { IChatEntities } from '../domain/entities/interfaces/chat.interfaces';
 import {
   MethodsMessageRepository
 } from './interfaces/message.interface';
-
-const database = [];
+import {
+  prisma
+} from '../../config/prisma';
 
 export class MessagesRepository
   implements MethodsMessageRepository {
-  constructor() { }
 
-  async findAll() {
-    return database;
+  private table = prisma.messages;
+
+  async findAll(room: string) {
+    const messages = await this.table.findMany({
+      where: { room },
+    })
+
+    return messages;
   }
   async create(data: IChatEntities) {
-    database.push(data);
-    return data;
+    const { message, name, room, userId } = data;
+
+    const Message = await this.table.create({
+      data: {
+        message,
+        room,
+        username: name,
+        usersId: userId
+      }
+    });
+
+    return Message;
   }
   async updated() { }
   async delete() { }

@@ -19,7 +19,7 @@ export class ChatEvents {
       const resolver = new ChatResolver(
         new ChatEntities()
       )
-      const response = await resolver.sendMessage(params);
+      const response = await resolver.sendMessage(params, this.Room(socket.eventId));
 
       socket.join(this.Room(socket.eventId));
       socket.emit(CHAT_EVENTS.NEW_MESSAGE, response);

@@ -12,10 +12,15 @@ import {
 } from './user.service';
 
 export class UserResolver {
-  async createUser(user: IUser) {
-    const User = new UserEntities().registerUser(user)
 
-    if (!User) return { Error: 'Not Content' }
+  private readonly entity = new UserEntities(
+    new UserRepository()
+  );
+
+  async createUser(user: IUser) {
+    const User = await this.entity.registerUser(user)
+
+    if (User?.message) return User;
 
     const service = new UserService(
       new UserRepository()
@@ -23,7 +28,7 @@ export class UserResolver {
 
     const createdUser = await service.createUser(User)
 
-    return createdUser;
+    return { user: createdUser };
   }
   async findAllUser() {
 
@@ -32,6 +37,16 @@ export class UserResolver {
     )
 
     const users = await service.findAllUsers();
+
+    return users;
+  }
+  async findUser(username: string) {
+
+    const service = new UserService(
+      new UserRepository()
+    )
+
+    const users = await service.findUser(username);
 
     return users;
   }

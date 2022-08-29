@@ -1,7 +1,8 @@
 export interface IChatEntities {
   message: string;
-  name: string;
   room: string;
+  name: string;
+  userId: string;
 }
 
 export interface IReturnChatEntities {
